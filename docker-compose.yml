@@ -1,0 +1,47 @@
+# Alfiqi Control — control panel + optional local S3 server (MinIO).
+#
+#   cp .env.example .env && edit it
+#   docker compose up -d --build
+#   docker compose --profile s3 up -d        # adds MinIO on :9000 (console :9001)
+#
+# The panel persists everything in ./data (control DB, snapshots, workspaces).
+# MinIO is only for testing the S3 integration locally; production can use
+# Cloudflare R2 / Backblaze B2 / AWS S3 instead.
+services:
+  control:
+    build: .
+    image: alfiqi-control:latest
+    container_name: alfiqi-control
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATA_DIR: /app/data
+      PORT: "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  minio:
+    image: minio/minio:latest
+    profiles: ["s3"]
+    container_name: alfiqi-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-alfiqi}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-alfiqi-minio-secret}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  minio-data:
