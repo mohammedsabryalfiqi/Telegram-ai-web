@@ -62,7 +62,7 @@ app.add_middleware(
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
-    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    # No X-Frame-Options: the panel must be embeddable in the hosted preview.
     response.headers.setdefault("Referrer-Policy", "same-origin")
     return response
 
