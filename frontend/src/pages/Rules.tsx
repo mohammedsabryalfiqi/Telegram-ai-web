@@ -106,7 +106,7 @@ export default function RulesPage() {
       <PageHeader
         eyebrow={bot.name}
         title={L("قواعد الموضوعات", "Topic Rules")}
-        subtitle={L("قواعد مكتوبة بكلماتك تُضاف لكل رد — الأسعار، الشحن، الضمان، وما لا يجب فعله.", "Your own rules injected into every reply — prices, delivery, warranty and guardrails.")}
+        subtitle={L("قواعد مكتوبة بكلماتك تُضاف لكل رد — حدود الردود الشخصية وما لا يجب فعله.", "Your own rules injected into every reply — personal reply boundaries and guardrails.")}
         actions={<Button icon={Plus} onClick={() => setAddOpen(true)}>{L("إضافة قاعدة", "Add rule")}</Button>}
       />
 

@@ -69,7 +69,7 @@ export default function SettingsPage() {
     s3_keep_local: true,
   });
   const [ai, setAi] = React.useState({ provider: "openai", model: "", base_url: "", api_key: "" });
-  const [botForm, setBotForm] = React.useState({ name: "", telegram_username: "", backup_interval_hours: 6, credits_total: 500 });
+  const [botForm, setBotForm] = React.useState({ name: "", telegram_username: "", backup_interval_hours: 6 });
   const [password, setPassword] = React.useState({ current_password: "", new_password: "", confirm: "" });
 
   const load = React.useCallback(async () => {
@@ -103,7 +103,6 @@ export default function SettingsPage() {
           name: currentBot.name,
           telegram_username: currentBot.telegram_username || "",
           backup_interval_hours: currentBot.backup_interval_hours,
-          credits_total: currentBot.credits_total,
         });
       }
     } catch (error) {
@@ -497,7 +496,7 @@ export default function SettingsPage() {
       {tab === "bot" ? (
         <div className="grid gap-5 xl:grid-cols-[1.4fr_1fr]">
           <Card>
-            <CardTitle title={L("بيانات البوت", "Bot profile")} subtitle={L("اسم العرض والجدول وحد الردود.", "Display name, schedule and reply limit.")} />
+            <CardTitle title={L("بيانات البوت", "Bot profile")} subtitle={L("اسم العرض وجدول النسخ.", "Display name and backup schedule.")} />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label={L("الاسم", "Name")}>
                 <input className="input" value={botForm.name} onChange={(event) => setBotForm({ ...botForm, name: event.target.value })} />
@@ -507,9 +506,6 @@ export default function SettingsPage() {
               </Field>
               <Field label={L("كل كم ساعة نسخة؟", "Backup interval")}>
                 <input type="number" min={1} max={168} className="input" value={botForm.backup_interval_hours} onChange={(event) => setBotForm({ ...botForm, backup_interval_hours: Number(event.target.value) })} />
-              </Field>
-              <Field label={L("حد الردود الشهرية", "Monthly reply limit")}>
-                <input type="number" min={0} className="input" value={botForm.credits_total} onChange={(event) => setBotForm({ ...botForm, credits_total: Number(event.target.value) })} />
               </Field>
             </div>
             <div className="mt-4 flex justify-end border-t border-slate-100 pt-4">
@@ -521,7 +517,6 @@ export default function SettingsPage() {
             <Card>
               <CardTitle title={L("الوضع الحالي", "Current state")} />
               <div className="space-y-2 text-[11.5px]">
-                <Row label={L("الحالة", "Status")} value={bot.status === "active" ? L("نشط", "Active") : L("متوقف", "Paused")} />
                 <Row label={L("المصدر", "Source")} value={bot.source_mode === "demo" ? L("تجريبي", "Demo") : L("وكيل", "Agent")} />
                 <Row label={L("النسخ", "Snapshots")} value={n(bot.snapshot_count)} />
                 <Row label={L("الحجم", "Storage")} value={bot.storage_human} />

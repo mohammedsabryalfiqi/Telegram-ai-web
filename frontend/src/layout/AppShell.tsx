@@ -215,29 +215,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         ))}
       </nav>
 
-      <div className="mt-auto border-t border-slate-100 px-4 py-4">
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="inline-flex items-center gap-1.5 font-semibold text-slate-500">
-            <Zap size={13} className="text-emerald-500" /> {L("حد الذكاء الاصطناعي", "AI limit")}
-          </span>
-          <span className="font-bold text-slate-700">
-            {bot ? `${(bot.credits_total - bot.credits_used).toLocaleString("en-US")} ${L("متبقي", "left")}` : "—"}
-          </span>
-        </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-          <div
-            className="h-full rounded-full bg-emerald-500 transition-all"
-            style={{ width: `${bot && bot.credits_total ? Math.min(100, Math.max(3, (bot.credits_used / bot.credits_total) * 100)) : 3}%` }}
-          />
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-[10px] text-slate-400">
-            {bot ? `${bot.credits_used.toLocaleString("en-US")} / ${bot.credits_total.toLocaleString("en-US")}` : ""}
-          </span>
-          <button onClick={() => navigate("/app/training")} className="text-[10.5px] font-bold text-brand-600 hover:text-brand-700">
-            {L("إدارة الخطة", "Manage plan")}
-          </button>
-        </div>
+      <div className="mt-auto border-t border-slate-100 px-4 py-4 text-[11px] leading-5 text-slate-500">
+        {L("البيانات من آخر نسخة للبوت، وليست إحصاءات مباشرة.", "Data comes from the latest bot snapshot, not a live feed.")}
       </div>
     </div>
   );

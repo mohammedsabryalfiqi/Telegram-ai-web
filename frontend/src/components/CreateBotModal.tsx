@@ -20,7 +20,6 @@ export default function CreateBotModal({
   const [name, setName] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [interval, setIntervalHours] = React.useState(6);
-  const [credits, setCredits] = React.useState(500);
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
   const [result, setResult] = React.useState<{ api_key: string; agent_command: string; ingest_url: string; bot: Bot } | null>(null);
@@ -29,7 +28,6 @@ export default function CreateBotModal({
     setName("");
     setUsername("");
     setIntervalHours(6);
-    setCredits(500);
     setError("");
     setResult(null);
     setSaving(false);
@@ -52,7 +50,6 @@ export default function CreateBotModal({
         name: name.trim(),
         telegram_username: username.trim(),
         backup_interval_hours: interval,
-        credits_total: credits,
       });
       setResult(data);
       const bots = await reloadBots();
@@ -108,16 +105,13 @@ export default function CreateBotModal({
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={L("اسم البوت", "Bot name")}>
-              <input className="input" value={name} onChange={(event) => setName(event.target.value)} placeholder="Alfiqi AI" autoFocus />
+              <input className="input" value={name} onChange={(event) => setName(event.target.value)} placeholder="بوت الدكتور محمد الفقي" autoFocus />
             </Field>
             <Field label={L("يوزر تليجرام (اختياري)", "Telegram username (optional)")}>
               <input className="input" dir="ltr" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="@alfiqi_ai_bot" />
             </Field>
             <Field label={L("كل كم ساعة نسخة؟", "Backup every (hours)")} hint={L("ينصح بـ 6 ساعات أو أقل.", "6 hours or less is recommended.")}>
               <input className="input" type="number" min={1} max={168} value={interval} onChange={(event) => setIntervalHours(Number(event.target.value) || 6)} />
-            </Field>
-            <Field label={L("حد الردود الشهرية", "Monthly reply limit")} hint={L("لمؤشر «حد الذكاء الاصطناعي» في الشريط الجانبي.", "Drives the AI limit meter in the sidebar.")}>
-              <input className="input" type="number" min={0} value={credits} onChange={(event) => setCredits(Number(event.target.value) || 0)} />
             </Field>
           </div>
           {error ? <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">{error}</p> : null}

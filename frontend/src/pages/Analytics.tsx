@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
       <PageHeader
         eyebrow={bot.name}
         title={L("التحليلات", "Analytics")}
-        subtitle={L("قراءة سريعة لأداء المساعد: حجم المحادثات، جودة التغطية، وأكثر ما يسأل عنه العملاء.", "A quick read on volume, coverage and what customers ask about most.")}
+        subtitle={L("قراءة سريعة لأداء المساعد: حجم المحادثات، جودة التغطية، وأكثر ما يسأل عنه المستخدمون.", "A quick read on volume, coverage and what users ask about most.")}
         actions={
           <>
             <Tabs items={RANGES.map((item) => ({ id: item.id, label: L(item.ar, item.en) }))} value={range} onChange={setRange} />
@@ -99,7 +99,7 @@ export default function AnalyticsPage() {
 
       <div className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label={L("إجمالي الرسائل", "Total messages")} value={n(totals.messages || 0)} icon={MessagesSquare} change={trends.incoming?.change_pct} hint={L("مقارنة بالأسبوع السابق", "vs previous week")} />
-        <KpiCard label={L("رسائل واردة", "Incoming")} value={n(totals.incoming || 0)} icon={ArrowUpRight} tone="violet" change={trends.incoming?.change_pct} hint={L("من العملاء", "from customers")} />
+        <KpiCard label={L("رسائل واردة", "Incoming")} value={n(totals.incoming || 0)} icon={ArrowUpRight} tone="violet" change={trends.incoming?.change_pct} hint={L("من المستخدمين", "from users")} />
         <KpiCard label={L("ردود المساعد", "Assistant replies")} value={n(totals.ai_replies || 0)} icon={Sparkles} tone="green" change={trends.outgoing?.change_pct} hint={`${aiShare}% ${L("من الحركة", "of traffic")}`} />
         <KpiCard label={L("تغطية الأسئلة", "Question coverage")} value={`${100 - Math.min(100, unansweredRate)}%`} icon={MessageCircle} tone="amber" hint={`${n(totals.unanswered_open || 0)} ${L("سؤال مفتوح", "open questions")}`} change={trends.unanswered?.change_pct} invert />
       </div>
@@ -153,10 +153,10 @@ export default function AnalyticsPage() {
           </Card>
 
           <Card>
-            <CardTitle title={L("العملاء الجدد", "New customers")} subtitle={L("نمو القاعدة", "List growth")} />
+            <CardTitle title={L("المستخدمون الجدد", "New users")} subtitle={L("نمو القاعدة", "List growth")} />
             <CustomersBarChart data={series} height={150} />
             <div className="mt-2 flex items-center justify-between text-[11px] text-slate-400">
-              <span>{L("إجمالي العملاء", "Total leads")}</span>
+              <span>{L("إجمالي المستخدمين", "Total users")}</span>
               <span className="font-bold text-slate-700">{n(totals.leads || 0)}</span>
             </div>
           </Card>
@@ -205,7 +205,7 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-2 gap-px bg-slate-100 sm:grid-cols-3">
             {[
               { ar: "المحادثات", en: "Dialogs", value: totals.dialogs },
-              { ar: "العملاء", en: "Leads", value: totals.leads },
+              { ar: "المستخدمون", en: "Users", value: totals.leads },
               { ar: "الرسائل الواردة", en: "Incoming", value: totals.incoming },
               { ar: "الردود الصادرة", en: "Outgoing", value: totals.outgoing },
               { ar: "الردود الآلية", en: "AI replies", value: totals.ai_replies },

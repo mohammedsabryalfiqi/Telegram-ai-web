@@ -28,10 +28,10 @@ type ChatMessage = {
 };
 
 const SUGGESTIONS = [
-  { ar: "بكام سفرة خشب زان 160؟", en: "How much is the 160cm beech dining table?" },
-  { ar: "هل يوجد توصيل لدمياط؟", en: "Do you deliver to Damietta?" },
-  { ar: "مواعيد العمل إمتى؟", en: "What are your working hours?" },
-  { ar: "عايز أعرف طرق الدفع", en: "What payment methods do you accept?" },
+  { ar: "السلام عليكم", en: "Peace be upon you" },
+  { ar: "عامل إيه يا دكتور؟", en: "How are you, doctor?" },
+  { ar: "السلام عليكم، عايز أعرف اسم الخط اللي في صورة", en: "Hello, can you identify a font in a photo?" },
+  { ar: "الخط في رسالتي مش واضح، أقصد الكتابة", en: "The line in my message is unclear; I mean the writing" },
 ];
 
 export default function TestingPage() {
@@ -54,8 +54,8 @@ export default function TestingPage() {
       id: "welcome",
       role: "assistant" as const,
       text: L(
-        `أهلاً 👋 أنا ${name}. جرّب أن تسألني كأنك عميل — سأستخدم نفس قاعدة المعرفة والقواعد والشخصية المستخدمة في البوت.`,
-        `Hi 👋 I'm ${name}. Ask me anything as if you were a customer — I'll use the same knowledge base, rules and persona as the bot.`,
+        `أهلاً 👋 أنا ${name}. جرّب أن تسألني كأنك تراسل حساب الدكتور — هذا اختبار تقريبي من آخر نسخة، وليس محادثة مع البوت نفسه.`,
+        `Hi 👋 I'm ${name}. Ask me anything as if you were messaging the doctor’s account — this is an approximation from the latest snapshot, not a chat with the bot itself.`,
       ),
       mode: "simulation" as const,
     }),
@@ -159,14 +159,14 @@ export default function TestingPage() {
   if (loading) return <Spinner />;
 
   const assistantName = persona.assistant_name || bot.name;
-  const businessName = persona.business_name || L("نشاطك", "your business");
+  const businessName = persona.business_name || L("الدكتور محمد الفقي", "Dr Mohammed Alfiqi");
 
   return (
     <>
       <PageHeader
         eyebrow={bot.name}
         title={L("الاختبار", "Testing")}
-        subtitle={L("جرّب ردود المساعد قبل أن يراها العملاء. المحاكاة تعمل دائمًا بدون مفاتيح أو إنترنت.", "Try replies before customers see them. Simulation always works, no key or internet needed.")}
+        subtitle={L("جرّب سيناريوهات الرسائل الشخصية وطلبات الخطوط. الاختبار تقريبي ولا يرسل رسائل تيليجرام.", "Try personal chats and font requests. This is an approximation and sends no Telegram messages.")}
         actions={
           <>
             <Tabs
@@ -174,7 +174,7 @@ export default function TestingPage() {
               onChange={(value) => setMode(value as typeof mode)}
               items={[
                 { id: "simulation", label: L("محاكاة محلية", "Local simulation") },
-                { id: "live", label: L("ذكاء اصطناعي مباشر", "Live AI") },
+                { id: "live", label: L("اختبار مزوّد الموقع", "Panel provider test") },
               ]}
             />
             <Button variant="secondary" icon={Eraser} onClick={clear}>{L("مسح", "Clear")}</Button>
@@ -221,7 +221,7 @@ export default function TestingPage() {
                   </div>
                   {message.role === "assistant" && !message.error ? (
                     <div className="mt-1 flex items-center gap-1.5 ps-1 text-[9.5px] text-slate-400">
-                      <span>{message.mode === "live" ? L("ذكاء اصطناعي", "Live AI") : L("محاكاة محلية", "Simulation")}</span>
+                      <span>{message.mode === "live" ? L("اختبار المزوّد", "Panel provider test") : L("محاكاة محلية", "Simulation")}</span>
                       {message.source ? <span>· {message.source}</span> : null}
                       {typeof message.confidence === "number" ? <span>· {Math.round(message.confidence * 100)}%</span> : null}
                     </div>
@@ -262,7 +262,7 @@ export default function TestingPage() {
                   }
                 }}
                 rows={1}
-                placeholder={L("اكتب رسالة كأنك العميل…", "Write a message as a customer…")}
+                placeholder={L("اكتب رسالة شخصية أو طلبًا عن خط…", "Write a personal message or a font request…")}
                 className="max-h-28 min-h-[38px] flex-1 resize-none bg-transparent px-2 py-2 text-[12.5px] leading-6 outline-none placeholder:text-slate-400"
               />
               <button
@@ -320,8 +320,8 @@ export default function TestingPage() {
                 <p className="text-[12px] font-bold text-slate-800">{L("كيف يعمل الاختبار؟", "How testing works")}</p>
                 <p className="mt-1 text-[11px] leading-6 text-slate-500">
                   {L(
-                    "الوضع المباشر يبني نفس تعليمات البوت من آخر نسخة احتياطية (الشخصية + المعرفة + القواعد) ثم يرسلها إلى المزوّد. المحاكاة تطابق الكلمات محليًا.",
-                    "Live mode rebuilds the bot prompt from the latest snapshot (persona + knowledge + rules), then calls your provider. Simulation matches keywords locally.",
+                    "اختبار المزوّد يستخدم تعليمات الحساب من آخر نسخة ومفتاح الموقع، لكنه لا ينفّذ مسار رد البوت نفسه. المحاكاة تطابق كلمات قاعدة المعرفة والردود السريعة فقط؛ تحقّق من السلوك النهائي برسالة تجريبية في تيليجرام.",
+                    "Provider testing uses the account instructions from the latest snapshot and the panel key, but does not run the bot reply pipeline. Local simulation only matches stored keywords; verify final behaviour in Telegram.",
                   )}
                 </p>
               </div>

@@ -22,7 +22,7 @@ ADMIN_EMAIL = (os.environ.get("ADMIN_EMAIL") or "").strip().lower()
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or ""
 ADMIN_NAME = os.environ.get("ADMIN_NAME") or "Owner"
 
-DEMO_SEED = (os.environ.get("DEMO_SEED", "1") or "1").strip() not in {"0", "false", "no", "off"}
+DEMO_SEED = (os.environ.get("DEMO_SEED", "0") or "0").strip() not in {"0", "false", "no", "off"}
 
 COOKIE_NAME = "cp_session"
 COOKIE_SECURE = (os.environ.get("COOKIE_SECURE", "0") or "0").strip() in {"1", "true", "yes"}
