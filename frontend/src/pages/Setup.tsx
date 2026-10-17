@@ -99,11 +99,11 @@ export default function SetupPage() {
       </form>
 
       <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 text-[11.5px] leading-6 text-slate-500">
-        <p className="font-bold text-slate-700">{L("مساحة تجريبية جاهزة", "A demo workspace is ready")}</p>
+        <p className="font-bold text-slate-700">{L("ابدأ بربط بوتك الحالي", "Connect your existing bot")}</p>
         <p className="mt-1">
           {L(
-            "ستجد بوتًا تجريبيًا بثلاث نسخ احتياطية لتجربة كل الشاشات. اربط بوتك الحقيقي ثم احذف المساحة التجريبية.",
-            "You will find a demo bot with three snapshots so every screen works. Connect your real bot, then delete the demo.",
+            "تبدأ اللوحة بلا بيانات وهمية. بعد إنشاء حسابك أضف بوت دكتور الخطوط واربط وكيل النسخ لتظهر بياناته الحقيقية.",
+            "The dashboard starts without fictional data. Add your existing bot and connect the backup agent to see real data.",
           )}
         </p>
       </div>

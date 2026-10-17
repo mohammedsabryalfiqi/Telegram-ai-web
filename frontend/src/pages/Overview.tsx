@@ -15,7 +15,6 @@ import {
   Inbox,
   MessageCircle,
   MessagesSquare,
-  Pause,
   Play,
   Plus,
   RefreshCw,
@@ -54,7 +53,6 @@ export default function OverviewPage() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [uploadOpen, setUploadOpen] = React.useState(false);
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [statusBusy, setStatusBusy] = React.useState(false);
 
   const load = React.useCallback(
     async (silent = false) => {
@@ -86,20 +84,6 @@ export default function OverviewPage() {
     return () => window.clearInterval(timer);
   }, [load]);
 
-  const toggle = async () => {
-    if (!bot) return;
-    setStatusBusy(true);
-    try {
-      await api.patch(`/api/bots/${bot.id}`, { status: bot.status === "active" ? "paused" : "active" });
-      await reloadBots();
-      await load(true);
-      toast(L("تم تحديث حالة المراقبة", "Monitoring status updated"), "success");
-    } catch (error) {
-      onError(error);
-    } finally {
-      setStatusBusy(false);
-    }
-  };
 
   if (!botId || !bot) {
     return (
@@ -191,7 +175,7 @@ export default function OverviewPage() {
   const age = backup?.age_hours ?? (lastAt ? (Date.now() - new Date(lastAt).getTime()) / 3_600_000 : null);
   const health = backup?.status || bot.health;
   const progress = age != null ? Math.min(100, Math.max(4, (age / interval) * 100)) : 0;
-  const creditsPct = bot.credits_total ? Math.min(100, (bot.credits_used / bot.credits_total) * 100) : 0;
+
   const maxPopular = Math.max(1, ...(data?.popular || []).map((item: any) => item.count));
 
   return (
@@ -206,18 +190,6 @@ export default function OverviewPage() {
         }
         actions={
           <>
-            <Badge tone={bot.status === "active" ? "green" : "slate"} dot>
-              {bot.status === "active" ? L("نشط", "Active") : L("متوقف", "Paused")}
-            </Badge>
-            <Button
-              variant={bot.status === "active" ? "secondary" : "primary"}
-              size="md"
-              icon={bot.status === "active" ? Pause : Play}
-              onClick={toggle}
-              loading={statusBusy}
-            >
-              {bot.status === "active" ? L("إيقاف المراقبة", "Stop") : L("تشغيل المراقبة", "Start")}
-            </Button>
             <Button variant="secondary" icon={RefreshCw} onClick={() => { setRefreshing(true); void load(true); }} loading={refreshing}>
               <span className="hidden sm:inline">{L("تحديث", "Refresh")}</span>
             </Button>
@@ -233,7 +205,6 @@ export default function OverviewPage() {
             <div className="flex items-start gap-4">
               <div className="relative flex h-14 w-14 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-700 text-[16px] font-extrabold text-white shadow-[0_10px_24px_-12px_rgba(0,111,206,.9)]">
                 {(persona.assistant_name || bot.name).slice(0, 2)}
-                <span className={cn("absolute -bottom-1 -end-1 h-3.5 w-3.5 rounded-full border-2 border-white", bot.status === "active" ? "bg-emerald-500" : "bg-slate-300")} />
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -242,13 +213,13 @@ export default function OverviewPage() {
                   {bot.source_mode === "demo" ? <Badge tone="violet">{L("تجريبي", "Demo")}</Badge> : null}
                 </div>
                 <p className="mt-1 text-[12px] leading-6 text-slate-500">
-                  {persona.business_description || L("مساعد تليجرام يجيب على العملاء بنبرة طبيعية.", "A Telegram assistant that replies naturally on your behalf.")}
+                  {persona.business_description || L("مساعد يجيب عن استفسارات المستخدمين حول الخطوط.", "A Telegram assistant for questions about fonts.")}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   <Badge tone="slate">{L("النبرة", "Tone")}: {persona.tone || "friendly"}</Badge>
                   <Badge tone="slate">{L("اللغة", "Language")}: {persona.reply_language === "auto" ? L("تلقائي", "Auto") : persona.reply_language || "ar"}</Badge>
                   <Badge tone={persona.auto_reply_enabled ? "green" : "amber"} dot>
-                    {persona.auto_reply_enabled ? L("رد تلقائي", "Auto-reply") : L("وضع الموافقة", "Approval mode")}
+                    {persona.auto_reply_enabled ? L("رد تلقائي", "Auto-reply") : persona.approval_mode_enabled ? L("وضع الموافقة", "Approval mode") : L("الرد متوقف", "Replies off")}
                   </Badge>
                 </div>
               </div>
@@ -270,7 +241,7 @@ export default function OverviewPage() {
 
       <div className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label={L("المحادثات", "Dialogs")} value={n(totals.dialogs || 0)} icon={MessagesSquare} hint={L("محادثة نشطة", "active chats")} change={trends.incoming?.change_pct} />
-        <KpiCard label={L("العملاء", "Leads")} value={n(totals.leads || 0)} icon={Users} tone="violet" hint={L("عميل في القاعدة", "customers")} change={trends.new_customers?.change_pct} />
+        <KpiCard label={L("المستخدمون", "Users")} value={n(totals.leads || 0)} icon={Users} tone="violet" hint={L("مستخدم في قاعدة البوت", "users")} change={trends.new_customers?.change_pct} />
         <KpiCard label={L("أسئلة بلا إجابة", "Unanswered")} value={n(totals.unanswered_open || 0)} icon={MessageCircle} tone="amber" hint={L("تحتاج مراجعة", "need review")} change={trends.unanswered?.change_pct} invert />
         <KpiCard label={L("ردود الذكاء الاصطناعي", "AI replies")} value={n(totals.ai_replies || 0)} icon={Sparkles} tone="green" hint={L("إجمالي الردود", "all-time replies")} change={trends.outgoing?.change_pct} />
       </div>
@@ -352,28 +323,11 @@ export default function OverviewPage() {
       <div className="mb-5 grid gap-5 xl:grid-cols-[1.1fr_1fr_1fr]">
         <Card>
           <CardTitle
-            title={L("حد الذكاء الاصطناعي", "AI limit")}
-            subtitle={L("عدد ردود المساعد هذا الشهر", "Assistant replies this month")}
-            action={<Badge tone={creditsPct > 90 ? "red" : creditsPct > 70 ? "amber" : "green"}>{Math.round(creditsPct)}%</Badge>}
+            title={L("ردود المساعد هذا الشهر", "Assistant replies this month")}
+            subtitle={L("عدد الردود المسجّلة في آخر نسخة من قاعدة البوت، وليس رصيدًا لدى مزوّد الذكاء الاصطناعي.", "Replies recorded in the latest bot snapshot, not your AI provider balance.")}
           />
-          <div className="flex items-end gap-2">
-            <p className="text-[32px] font-extrabold leading-none tracking-tight text-slate-900">{n(bot.credits_total - bot.credits_used)}</p>
-            <p className="pb-1 text-[11.5px] text-slate-400">{L("رد متبقٍ", "replies left")}</p>
-          </div>
-          <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-100">
-            <div className={cn("h-full rounded-full", creditsPct > 90 ? "bg-rose-500" : "bg-emerald-500")} style={{ width: `${Math.max(2, creditsPct)}%` }} />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[10.5px] text-slate-400">
-            <span>{n(bot.credits_used)} {L("مستخدم", "used")}</span>
-            <span>{n(bot.credits_total)} {L("الإجمالي", "total")}</span>
-          </div>
-          <div className="mt-4 flex items-center gap-2 rounded-xl bg-brand-50/70 px-3 py-2 text-[11px] leading-5 text-brand-800">
-            <Cpu size={14} className="flex-none" />
-            {L("يُحدَّث تلقائيًا مع كل نسخة احتياطية من قاعدة البوت.", "Recalculated from the bot database on every snapshot.")}
-          </div>
-          <Button variant="ghost" size="sm" className="mt-2 -ms-2" icon={ArrowUpRight} onClick={() => navigate("/app/training")}>
-            {L("تعديل الحد من الإعدادات", "Adjust in settings")}
-          </Button>
+          <p className="mt-3 text-[32px] font-extrabold text-slate-900">{n(totals.ai_this_month || 0)}</p>
+          <p className="mt-3 text-[11px] text-slate-500">{L("يتحدث الرقم عند وصول نسخة جديدة من البوت.", "Updated when a new bot snapshot arrives.")}</p>
         </Card>
 
         <Card>
@@ -440,7 +394,7 @@ export default function OverviewPage() {
           <div className="flex items-center justify-between px-5 pt-5">
             <div>
               <h3 className="text-[15px] font-bold text-slate-900">{L("أحدث المحادثات", "Recent dialogs")}</h3>
-              <p className="mt-0.5 text-xs text-slate-400">{L("آخر الرسائل الواردة من العملاء", "Latest customer messages")}</p>
+              <p className="mt-0.5 text-xs text-slate-400">{L("آخر الرسائل الواردة من المستخدمين", "Latest user messages")}</p>
             </div>
             <Button size="sm" variant="ghost" onClick={() => navigate("/app/analytics")}>{L("عرض التحليلات", "View analytics")}</Button>
           </div>
@@ -449,7 +403,7 @@ export default function OverviewPage() {
               <table className="w-full min-w-[560px] text-start">
                 <thead className="table-head">
                   <tr>
-                    <th className="px-5 py-2.5 text-start font-bold">{L("العميل", "Customer")}</th>
+                    <th className="px-5 py-2.5 text-start font-bold">{L("المرسل", "Sender")}</th>
                     <th className="px-3 py-2.5 text-start font-bold">{L("آخر رسالة", "Last message")}</th>
                     <th className="px-5 py-2.5 text-end font-bold">{L("الوقت", "Time")}</th>
                   </tr>
@@ -464,7 +418,7 @@ export default function OverviewPage() {
                           </span>
                           <div className="min-w-0">
                             <p className="truncate text-[12px] font-bold text-slate-700">{chat.name || `#${chat.chat_id}`}</p>
-                            <p className="text-[10px] text-slate-400">{chat.username ? `@${chat.username}` : L("عميل", "Customer")}</p>
+                            <p className="text-[10px] text-slate-400">{chat.username ? `@${chat.username}` : L("مرسل", "Sender")}</p>
                           </div>
                         </div>
                       </td>

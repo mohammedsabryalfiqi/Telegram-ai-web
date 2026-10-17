@@ -53,7 +53,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div className="relative flex items-center gap-2 text-[11px] text-sky-200/60">
           <Sparkles size={13} />
-          {L("مصمّم لـ SmarTel / Tg-bot-ai", "Built for SmarTel / Tg-bot-ai")}
+          {L("مصمّم لبوت دكتور الخطوط / Tg-bot-ai", "Built for Doctor of Fonts / Tg-bot-ai")}
         </div>
       </div>
 

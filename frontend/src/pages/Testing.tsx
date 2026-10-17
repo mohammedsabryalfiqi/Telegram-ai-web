@@ -28,10 +28,10 @@ type ChatMessage = {
 };
 
 const SUGGESTIONS = [
-  { ar: "بكام سفرة خشب زان 160؟", en: "How much is the 160cm beech dining table?" },
-  { ar: "هل يوجد توصيل لدمياط؟", en: "Do you deliver to Damietta?" },
-  { ar: "مواعيد العمل إمتى؟", en: "What are your working hours?" },
-  { ar: "عايز أعرف طرق الدفع", en: "What payment methods do you accept?" },
+  { ar: "فين رابط تحميل الخط؟", en: "Where can I download the font?" },
+  { ar: "كيف أثبّت الخط على هاتفي؟", en: "How do I install the font on my phone?" },
+  { ar: "هل يوجد خط عربي مشابه؟", en: "Is there a similar Arabic font?" },
+  { ar: "فين الملفات المثبتة في المجموعة؟", en: "Where are the group’s pinned files?" },
 ];
 
 export default function TestingPage() {
@@ -54,8 +54,8 @@ export default function TestingPage() {
       id: "welcome",
       role: "assistant" as const,
       text: L(
-        `أهلاً 👋 أنا ${name}. جرّب أن تسألني كأنك عميل — سأستخدم نفس قاعدة المعرفة والقواعد والشخصية المستخدمة في البوت.`,
-        `Hi 👋 I'm ${name}. Ask me anything as if you were a customer — I'll use the same knowledge base, rules and persona as the bot.`,
+        `أهلاً 👋 أنا ${name}. جرّب أن تسألني كأنك أحد الأعضاء — سأستخدم نفس قاعدة المعرفة والقواعد والشخصية المستخدمة في البوت.`,
+        `Hi 👋 I'm ${name}. Ask me anything as if you were a member — I'll use the same knowledge base, rules and persona as the bot.`,
       ),
       mode: "simulation" as const,
     }),
@@ -159,14 +159,14 @@ export default function TestingPage() {
   if (loading) return <Spinner />;
 
   const assistantName = persona.assistant_name || bot.name;
-  const businessName = persona.business_name || L("نشاطك", "your business");
+  const businessName = persona.business_name || L("دكتور الخطوط", "Doctor of Fonts");
 
   return (
     <>
       <PageHeader
         eyebrow={bot.name}
         title={L("الاختبار", "Testing")}
-        subtitle={L("جرّب ردود المساعد قبل أن يراها العملاء. المحاكاة تعمل دائمًا بدون مفاتيح أو إنترنت.", "Try replies before customers see them. Simulation always works, no key or internet needed.")}
+        subtitle={L("جرّب ردود المساعد قبل أن تصل للمستخدمين. المحاكاة تعمل دائمًا بدون مفاتيح أو إنترنت.", "Try replies before users see them. Simulation always works, no key or internet needed.")}
         actions={
           <>
             <Tabs
@@ -262,7 +262,7 @@ export default function TestingPage() {
                   }
                 }}
                 rows={1}
-                placeholder={L("اكتب رسالة كأنك العميل…", "Write a message as a customer…")}
+                placeholder={L("اكتب استفسارًا عن الخطوط…", "Ask about a font…")}
                 className="max-h-28 min-h-[38px] flex-1 resize-none bg-transparent px-2 py-2 text-[12.5px] leading-6 outline-none placeholder:text-slate-400"
               />
               <button

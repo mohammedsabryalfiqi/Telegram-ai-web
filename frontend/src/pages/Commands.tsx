@@ -40,7 +40,7 @@ const GROUPS = [
     commands: [
       { cmd: "/chats", ar: "أحدث المحادثات مع أزرار فتح وإيقاف.", en: "Recent chats with open/pause buttons." },
       { cmd: "/chat <id>", ar: "عرض محادثة محددة كاملة.", en: "Inspect a specific chat." },
-      { cmd: "/reply <id> <text>", ar: "إرسال رد يدوي للعميل.", en: "Send a manual reply." },
+      { cmd: "/reply <id> <text>", ar: "إرسال رد يدوي لمستخدم.", en: "Send a manual reply to a user." },
       { cmd: "/takeover", ar: "إيقاف البوت مؤقتًا في محادثة.", en: "Pause the bot in a chat." },
       { cmd: "/stats", ar: "إحصاءات سريعة عن الرسائل والردود.", en: "Quick message and reply stats." },
       { cmd: "/health", ar: "فحص المزوّد وقاعدة البيانات والاتصال.", en: "Provider, database and connection check." },

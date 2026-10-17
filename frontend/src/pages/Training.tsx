@@ -53,7 +53,7 @@ const TONES = [
 ];
 
 const LANGUAGES = [
-  { id: "auto", ar: "تلقائي (لغة العميل)", en: "Auto (customer language)" },
+  { id: "auto", ar: "تلقائي (لغة المرسل)", en: "Auto (sender language)" },
   { id: "ar", ar: "العربية", en: "Arabic" },
   { id: "en", ar: "English", en: "English" },
   { id: "fr", ar: "Français", en: "French" },
@@ -220,6 +220,13 @@ export default function TrainingPage() {
         }
       />
 
+      <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[11.5px] leading-6 text-amber-900">
+        {L(
+          "تنبيه: إعداد «الرد على رسائل البوت» يخص الرسائل الخاصة للبوت، وليس الرسائل داخل المجموعة. الرد داخل مجموعة دكتور الخطوط يحتاج دعمًا إضافيًا في كود البوت نفسه.",
+          "Note: Direct replies apply to private chats with the bot, not group messages. Replying inside the Doctor of Fonts group requires additional bot-side support.",
+        )}
+      </div>
+
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <Tabs
           value={tab}
@@ -245,8 +252,8 @@ export default function TrainingPage() {
               <Field label={L("اسم المساعد", "Assistant name")}>
                 <input className="input" value={values.assistant_name || ""} onChange={(event) => setValues({ ...values, assistant_name: event.target.value })} placeholder={L("مساعد ألفقي", "Alfiqi assistant")} />
               </Field>
-              <Field label={L("اسم النشاط", "Business name")}>
-                <input className="input" value={values.business_name || ""} onChange={(event) => setValues({ ...values, business_name: event.target.value })} placeholder={L("ألفقي ستور", "Alfiqi Store")} />
+              <Field label={L("اسم الحساب أو المجموعة", "Account or group name")}>
+                <input className="input" value={values.business_name || ""} onChange={(event) => setValues({ ...values, business_name: event.target.value })} placeholder={L("دكتور الخطوط", "Doctor of Fonts")} />
               </Field>
               <Field label={L("نبرة الرد", "Tone")}>
                 <select className="input" value={values.tone || "friendly"} onChange={(event) => setValues({ ...values, tone: event.target.value })}>
@@ -262,11 +269,11 @@ export default function TrainingPage() {
                   ))}
                 </select>
               </Field>
-              <Field className="sm:col-span-2" label={L("وصف النشاط", "Business description")}>
-                <textarea className="textarea min-h-[80px]" value={values.business_description || ""} onChange={(event) => setValues({ ...values, business_description: event.target.value })} placeholder={L("معرض أثاث ومطابخ في دمياط…", "Furniture & kitchens showroom in Damietta…")} />
+              <Field className="sm:col-span-2" label={L("وصف المساعد ودوره", "Assistant purpose")}>
+                <textarea className="textarea min-h-[80px]" value={values.business_description || ""} onChange={(event) => setValues({ ...values, business_description: event.target.value })} placeholder={L("مساعد شخصي يجيب عن استفسارات أعضاء مجموعة دكتور الخطوط…", "A personal assistant answering Doctor of Fonts members’ questions…")} />
               </Field>
               <Field className="sm:col-span-2" label={L("تعليمات المالك", "Owner instructions")} hint={L("أهم الإرشادات التي يجب أن يتبعها في كل محادثة.", "The rules it must follow in every conversation.")}>
-                <textarea className="textarea" value={values.custom_instructions || ""} onChange={(event) => setValues({ ...values, custom_instructions: event.target.value })} placeholder={L("رحّب بالعميل باسمه، واسأل عن المقاس قبل السعر…", "Greet by name, ask for dimensions before price…")} />
+                <textarea className="textarea" value={values.custom_instructions || ""} onChange={(event) => setValues({ ...values, custom_instructions: event.target.value })} placeholder={L("أجب عن استفسارات الخطوط والملفات بلطف؛ لا تخترع روابط أو معلومات…", "Answer font and file questions politely; do not invent links or facts…")} />
               </Field>
               <Field label={L("أقصى طول للرد", "Max reply length")} hint={L("عدد الأحرف", "Characters")}>
                 <input type="number" className="input" value={values.max_reply_chars || 900} onChange={(event) => setValues({ ...values, max_reply_chars: Number(event.target.value) })} />
@@ -290,7 +297,7 @@ export default function TrainingPage() {
                 </div>
                 <div>
                   <p className="text-[14px] font-extrabold text-slate-900">{values.assistant_name || L("مساعد بلا اسم", "Unnamed assistant")}</p>
-                  <p className="text-[11.5px] text-slate-400">{values.business_name || L("نشاط بلا اسم", "Unnamed business")}</p>
+                  <p className="text-[11.5px] text-slate-400">{values.business_name || L("لم يُحدَّد الاسم", "No name set")}</p>
                 </div>
               </div>
               <div className="mt-3 rounded-xl bg-slate-50 px-3.5 py-3 text-[11.5px] leading-6 text-slate-500">
@@ -307,7 +314,7 @@ export default function TrainingPage() {
               <ul className="space-y-2.5 text-[11.5px] leading-6 text-slate-500">
                 {[
                   { ar: "اكتب التعليمات بصيغة أوامر واضحة وقصيرة.", en: "Write instructions as short, clear rules." },
-                  { ar: "أضف الأسعار والسياسات في قاعدة المعرفة، لا في التعليمات.", en: "Put prices and policies in the knowledge base, not the prompt." },
+                  { ar: "أضف معلومات الخطوط والروابط الموثوقة في قاعدة المعرفة، لا في التعليمات.", en: "Put verified font information and links in the knowledge base, not the prompt." },
                   { ar: "راقب «أسئلة بلا إجابة» وأضف الردود بانتظام.", en: "Watch unanswered questions and add answers regularly." },
                 ].map((tip) => (
                   <li key={tip.en} className="flex gap-2"><span className="mt-2 h-1 w-1 flex-none rounded-full bg-brand-400" />{L(tip.ar, tip.en)}</li>
@@ -388,7 +395,7 @@ export default function TrainingPage() {
             action={<Button size="sm" icon={Plus} onClick={() => setNoteOpen(true)}>{L("إضافة نص", "Add text")}</Button>}
           />
           {notes.length === 0 ? (
-            <EmptyState icon={GraduationCap} title={L("لا ملاحظات بعد", "No notes yet")} description={L("أضف تفاصيل المنتجات، السياسات، أو أي معلومات دورية.", "Add product details, policies or recurring facts.")} action={<Button size="sm" icon={Plus} onClick={() => setNoteOpen(true)}>{L("إضافة نص", "Add text")}</Button>} />
+            <EmptyState icon={GraduationCap} title={L("لا ملاحظات بعد", "No notes yet")} description={L("أضف معلومات الخطوط، الأسئلة المتكررة، أو روابط المجموعة.", "Add font information, recurring questions, or group links.")} action={<Button size="sm" icon={Plus} onClick={() => setNoteOpen(true)}>{L("إضافة نص", "Add text")}</Button>} />
           ) : (
             <div className="space-y-2.5">
               {notes.map((note) => (
@@ -424,14 +431,14 @@ export default function TrainingPage() {
         }
       >
         <div className="space-y-4">
-          <Field label={L("الكلمات المفتاحية", "Keywords")} hint={L("افصل بينها بفاصلة — مثال: سعر, أسعار, بكام", "Comma separated — e.g. price, cost, how much")}>
-            <input className="input" value={faqForm.keywords} onChange={(event) => setFaqForm({ ...faqForm, keywords: event.target.value })} placeholder={L("سعر، بكام، تكلفة", "price, cost, how much")} />
+          <Field label={L("الكلمات المفتاحية", "Keywords")} hint={L("افصل بينها بفاصلة — مثال: تحميل, خط, رابط", "Comma separated — e.g. download, font, link")}>
+            <input className="input" value={faqForm.keywords} onChange={(event) => setFaqForm({ ...faqForm, keywords: event.target.value })} placeholder={L("تحميل، خط، رابط", "download, font, link")} />
           </Field>
           <Field label={L("السؤال (اختياري)", "Question (optional)")}>
-            <input className="input" value={faqForm.question} onChange={(event) => setFaqForm({ ...faqForm, question: event.target.value })} placeholder={L("كام سعر الشحن؟", "How much is shipping?")} />
+            <input className="input" value={faqForm.question} onChange={(event) => setFaqForm({ ...faqForm, question: event.target.value })} placeholder={L("كيف أحمّل الخط؟", "How can I download the font?")} />
           </Field>
           <Field label={L("الرد", "Answer")}>
-            <textarea className="textarea" value={faqForm.answer} onChange={(event) => setFaqForm({ ...faqForm, answer: event.target.value })} placeholder={L("الشحن 60 جنيهًا داخل دمياط…", "Shipping is EGP 60 inside Damietta…")} />
+            <textarea className="textarea" value={faqForm.answer} onChange={(event) => setFaqForm({ ...faqForm, answer: event.target.value })} placeholder={L("يمكنك تحميل الخط من الرابط المثبت في المجموعة…", "You can download the font from the pinned group link…")} />
           </Field>
         </div>
       </Modal>

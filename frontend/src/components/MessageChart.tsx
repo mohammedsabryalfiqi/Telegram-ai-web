@@ -58,7 +58,7 @@ export function CustomersBarChart({ data, height = 220 }: { data: any[]; height?
           <CartesianGrid strokeDasharray="3 6" stroke="#e8eef6" vertical={false} />
           <XAxis dataKey="date" tickFormatter={(value) => dayLabel(value, lang)} tickLine={false} axisLine={false} minTickGap={28} />
           <YAxis tickLine={false} axisLine={false} allowDecimals={false} width={38} />
-          <Tooltip labelFormatter={(value) => dayLabel(String(value), lang)} formatter={(value: any) => [n(Number(value)), L("عملاء جدد", "New customers")]} />
+          <Tooltip labelFormatter={(value) => dayLabel(String(value), lang)} formatter={(value: any) => [n(Number(value)), L("مستخدمون جدد", "New users")]} />
           <Bar dataKey="new_customers" fill="#36a9ff" radius={[5, 5, 0, 0]} maxBarSize={26} />
         </BarChart>
       </ResponsiveContainer>

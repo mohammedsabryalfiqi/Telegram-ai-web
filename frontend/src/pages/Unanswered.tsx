@@ -92,7 +92,7 @@ export default function UnansweredPage() {
       <PageHeader
         eyebrow={bot.name}
         title={L("أسئلة بلا إجابة", "Unanswered")}
-        subtitle={L("بدل أن يخمّن المساعد، يسجّل السؤال هنا. إجابتك تُرسل للعميل وتُتعلَّم كرد سريع.", "Instead of guessing, the assistant logs the question. Your answer reaches the customer and becomes a quick reply.")}
+        subtitle={L("بدل أن يخمّن المساعد، يسجّل السؤال هنا. إجابتك تُحفظ كرد سريع ويُزامنها الوكيل مع البوت؛ لا تُرسل رسالة مباشرة للمرسل.", "Instead of guessing, the assistant logs the question. Your answer is saved as a quick reply and synced to the bot; it is not sent to the sender immediately.")}
         actions={<Badge tone="amber">{n(counts.open)} {L("بانتظار الرد", "waiting")}</Badge>}
       />
 
@@ -190,8 +190,8 @@ export default function UnansweredPage() {
       <div className="mt-4 flex items-start gap-2 rounded-2xl border border-brand-100 bg-brand-50/50 px-4 py-3 text-[11px] leading-6 text-brand-900">
         <Sparkles size={14} className="mt-0.5 flex-none" />
         {L(
-          "الإجابة تُخزَّن كسؤال شائع فورًا في نسخة اللوحة، وتُزامَن مع البوت عبر الوكيل — لن يُسأل نفس السؤال مرتين.",
-          "The answer is stored as a quick reply in the dashboard copy and synced to the bot by the agent — the same question is never asked twice.",
+          "الإجابة تُخزَّن كسؤال شائع فورًا في نسخة اللوحة، وتُزامَن مع البوت عبر الوكيل — ستتاح الإجابة للردود التالية بعد المزامنة.",
+          "The answer is stored as a quick reply in the dashboard copy and synced to the bot by the agent — the answer becomes available for future replies after sync.",
         )}
       </div>
 
@@ -212,10 +212,10 @@ export default function UnansweredPage() {
       >
         <div className="space-y-3">
           <div className="rounded-xl bg-slate-50 px-3.5 py-3 text-[11.5px] leading-6 text-slate-500">
-            {L("اكتب الإجابة بنفس الأسلوب الذي تريده للعميل — ستُرسل كما هي.", "Write it exactly as the customer should receive it — it is sent verbatim.")}
+            {L("اكتب إجابة يمكن للبوت استخدامها لاحقًا. الحفظ هنا لا يرسل رسالة للمستخدم.", "Write an answer the bot can reuse later. Saving it here does not message the user.")}
           </div>
           <Field label={L("الإجابة", "Answer")}>
-            <textarea className="textarea min-h-[150px]" autoFocus value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={L("للأسف التوصيل لمناطق خارج دمياط بيتكلف 100 جنيه…", "Delivery outside Damietta costs EGP 100…")} />
+            <textarea className="textarea min-h-[150px]" autoFocus value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={L("رابط الخط موجود في رسالة المجموعة المثبتة…", "The font link is in the pinned group message…")} />
           </Field>
         </div>
       </Modal>
