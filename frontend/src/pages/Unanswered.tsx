@@ -215,7 +215,7 @@ export default function UnansweredPage() {
             {L("اكتب إجابة يمكن للبوت استخدامها لاحقًا. الحفظ هنا لا يرسل رسالة للمستخدم.", "Write an answer the bot can reuse later. Saving it here does not message the user.")}
           </div>
           <Field label={L("الإجابة", "Answer")}>
-            <textarea className="textarea min-h-[150px]" autoFocus value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={L("رابط الخط موجود في رسالة المجموعة المثبتة…", "The font link is in the pinned group message…")} />
+            <textarea className="textarea min-h-[150px]" autoFocus value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={L("إذا كان طلبك عن معرفة خط، يمكنك نشره في https://t.me/Alfiqifont", "For font identification requests, try https://t.me/Alfiqifont")} />
           </Field>
         </div>
       </Modal>

@@ -105,7 +105,7 @@ export default function CreateBotModal({
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={L("اسم البوت", "Bot name")}>
-              <input className="input" value={name} onChange={(event) => setName(event.target.value)} placeholder="دكتور الخطوط" autoFocus />
+              <input className="input" value={name} onChange={(event) => setName(event.target.value)} placeholder="بوت الدكتور محمد الفقي" autoFocus />
             </Field>
             <Field label={L("يوزر تليجرام (اختياري)", "Telegram username (optional)")}>
               <input className="input" dir="ltr" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="@alfiqi_ai_bot" />

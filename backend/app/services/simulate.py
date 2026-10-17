@@ -115,7 +115,7 @@ def simulate(bot_id: int, message: str) -> dict[str, Any]:
     return {
         "ok": True,
         "mode": "simulation",
-        "text": "مش لاقي إجابة مؤكدة للسؤال ده في قاعدة المعرفة. هسأل الفريق وأرجعلك بإجابة دقيقة بدل ما أخمّن. 🙏",
+        "text": "المحاكاة المحلية مش لاقية إجابة مؤكدة في آخر نسخة من قاعدة المعرفة. ده مش رد البوت الحقيقي.",
         "source": "fallback",
         "label": "",
         "confidence": best["score"] if best else 0,

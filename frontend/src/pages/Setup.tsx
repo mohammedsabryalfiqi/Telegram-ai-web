@@ -102,7 +102,7 @@ export default function SetupPage() {
         <p className="font-bold text-slate-700">{L("ابدأ بربط بوتك الحالي", "Connect your existing bot")}</p>
         <p className="mt-1">
           {L(
-            "تبدأ اللوحة بلا بيانات وهمية. بعد إنشاء حسابك أضف بوت دكتور الخطوط واربط وكيل النسخ لتظهر بياناته الحقيقية.",
+            "تبدأ اللوحة بلا بيانات وهمية. بعد إنشاء حسابك أضف بوت حساب الدكتور واربط وكيل النسخ لتظهر بياناته الحقيقية.",
             "The dashboard starts without fictional data. Add your existing bot and connect the backup agent to see real data.",
           )}
         </p>

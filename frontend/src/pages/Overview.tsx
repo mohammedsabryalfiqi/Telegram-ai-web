@@ -213,7 +213,7 @@ export default function OverviewPage() {
                   {bot.source_mode === "demo" ? <Badge tone="violet">{L("تجريبي", "Demo")}</Badge> : null}
                 </div>
                 <p className="mt-1 text-[12px] leading-6 text-slate-500">
-                  {persona.business_description || L("مساعد يجيب عن استفسارات المستخدمين حول الخطوط.", "A Telegram assistant for questions about fonts.")}
+                  {persona.business_description || L("مساعد لحساب الدكتور الشخصي؛ يوجّه طلبات الخطوط للمجموعة.", "A personal account assistant that refers font requests to the group.")}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   <Badge tone="slate">{L("النبرة", "Tone")}: {persona.tone || "friendly"}</Badge>

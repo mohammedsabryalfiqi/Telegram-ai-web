@@ -13,6 +13,7 @@ import {
 import { api, ApiError } from "../api";
 import { useApp, usePageError } from "../context";
 import { useI18n } from "../i18n";
+import { PERSONAL_REPLY_PRESET } from "../personalReplyPreset";
 import {
   Badge,
   Button,
@@ -40,7 +41,7 @@ const BEHAVIOR: Array<{ key: string; ar: string; en: string; descAr: string; des
   { key: "rules_enabled", ar: "قواعد الموضوعات", en: "Topic rules", descAr: "إضافة قواعدك إلى كل رد.", descEn: "Inject your rules into every reply." },
   { key: "resources_enabled", ar: "المصادر", en: "Resources", descAr: "روابط ومواقع يمكن للمساعد ذكرها.", descEn: "Links and sites the assistant may cite." },
   { key: "unanswered_enabled", ar: "تسجيل الأسئلة", en: "Log unanswered", descAr: "يحفظ ما لم يستطع الإجابة عنه.", descEn: "Save questions it could not answer." },
-  { key: "direct_reply_enabled", ar: "الرد على رسائل البوت", en: "Direct messages", descAr: "الرد على من يراسل البوت مباشرة.", descEn: "Answer people who message the bot." },
+  { key: "direct_reply_enabled", ar: "الرد على خاص البوت نفسه", en: "Bot private chat", descAr: "يخص الرسائل الخاصة للبوت، وليس رسائل الحساب المرتبط عبر Telegram Business.", descEn: "Controls the bot’s own private chat, not the linked Telegram Business account." },
   { key: "disclose_ai", ar: "الإفصاح بأنه مساعد آلي", en: "Disclose AI", descAr: "يمكنه قول إنه مساعد آلي عند السؤال.", descEn: "May say it is an AI assistant when asked." },
 ];
 
@@ -81,6 +82,7 @@ export default function TrainingPage() {
   const [deleteFaq, setDeleteFaq] = React.useState<number | null>(null);
   const [deleteNote, setDeleteNote] = React.useState<number | null>(null);
   const [busy, setBusy] = React.useState(false);
+  const [presetOpen, setPresetOpen] = React.useState(false);
 
   const load = React.useCallback(async () => {
     if (!botId) return;
@@ -116,8 +118,8 @@ export default function TrainingPage() {
         if (key in values) payload[key] = values[key];
       });
       await api.patch(`/api/bots/${botId}/settings`, { values: payload });
-      toast(L("تم حفظ بيانات المساعد ومزامنتها", "Persona saved and queued"), "success");
-      setPending((current) => current + keys.length);
+      toast(L("أُضيفت تعليمات المساعد إلى قائمة المزامنة", "Persona changes queued for sync"), "success");
+      setPending((current) => current + Object.keys(payload).length);
     } catch (error) {
       onError(error);
     } finally {
@@ -222,8 +224,8 @@ export default function TrainingPage() {
 
       <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[11.5px] leading-6 text-amber-900">
         {L(
-          "تنبيه: إعداد «الرد على رسائل البوت» يخص الرسائل الخاصة للبوت، وليس الرسائل داخل المجموعة. الرد داخل مجموعة دكتور الخطوط يحتاج دعمًا إضافيًا في كود البوت نفسه.",
-          "Note: Direct replies apply to private chats with the bot, not group messages. Replying inside the Doctor of Fonts group requires additional bot-side support.",
+          "اللوحة تضبط ردود الرسائل الخاصة لحساب الدكتور عبر اتصال Telegram Business، أو الرسائل الخاصة للبوت نفسه. مجموعة دكتور الخطوط وجهة لطلبات الخطوط فقط؛ هذه الإعدادات لا تجعل البوت يرد داخل المجموعة.",
+          "The panel configures private replies to the doctor's connected Telegram Business account or the bot's own private chat. The fonts group is a referral destination; these settings do not enable replies inside it.",
         )}
       </div>
 
@@ -247,13 +249,17 @@ export default function TrainingPage() {
       {tab === "persona" ? (
         <div className="grid gap-5 xl:grid-cols-[1.5fr_1fr]">
           <Card>
-            <CardTitle title={L("هوية المساعد", "Assistant identity")} subtitle={L("تظهر هذه البيانات في كل رد وفي لوحة المتابعة.", "Used in every reply and across the dashboard.")} />
+            <CardTitle title={L("هوية المساعد", "Assistant identity")} subtitle={L("تُضاف هذه البيانات لتعليمات الرد في البوت بعد مزامنة الوكيل.", "Synced into the bot's reply instructions by the agent.")} />
+            <div className="mb-4 rounded-xl border border-brand-100 bg-brand-50/40 p-3 text-[11.5px] leading-6 text-brand-900">
+              <p>{L("قالب اختياري لردود حساب الدكتور الشخصية وتوجيه طلبات الخطوط للمجموعة. راجعه وعدّله قبل الحفظ؛ لن يُطبّق على البوت تلقائيًا.", "Optional personal-reply template for the doctor's account and font-request referrals. Review it before saving; it is not applied automatically.")}</p>
+              <Button size="sm" variant="secondary" className="mt-2" onClick={() => setPresetOpen(true)}>{L("تحميل قالب الرد الشخصي", "Load personal reply template")}</Button>
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label={L("اسم المساعد", "Assistant name")}>
                 <input className="input" value={values.assistant_name || ""} onChange={(event) => setValues({ ...values, assistant_name: event.target.value })} placeholder={L("مساعد ألفقي", "Alfiqi assistant")} />
               </Field>
-              <Field label={L("اسم الحساب أو المجموعة", "Account or group name")}>
-                <input className="input" value={values.business_name || ""} onChange={(event) => setValues({ ...values, business_name: event.target.value })} placeholder={L("دكتور الخطوط", "Doctor of Fonts")} />
+              <Field label={L("صاحب الحساب", "Account holder")}>
+                <input className="input" value={values.business_name || ""} onChange={(event) => setValues({ ...values, business_name: event.target.value })} placeholder={L("الدكتور محمد الفقي", "Dr Mohammed Alfiqi")} />
               </Field>
               <Field label={L("نبرة الرد", "Tone")}>
                 <select className="input" value={values.tone || "friendly"} onChange={(event) => setValues({ ...values, tone: event.target.value })}>
@@ -269,11 +275,11 @@ export default function TrainingPage() {
                   ))}
                 </select>
               </Field>
-              <Field className="sm:col-span-2" label={L("وصف المساعد ودوره", "Assistant purpose")}>
-                <textarea className="textarea min-h-[80px]" value={values.business_description || ""} onChange={(event) => setValues({ ...values, business_description: event.target.value })} placeholder={L("مساعد شخصي يجيب عن استفسارات أعضاء مجموعة دكتور الخطوط…", "A personal assistant answering Doctor of Fonts members’ questions…")} />
+              <Field className="sm:col-span-2" label={L("وصف الحساب الشخصي", "Personal account description")}>
+                <textarea className="textarea min-h-[80px]" value={values.business_description || ""} onChange={(event) => setValues({ ...values, business_description: event.target.value })} placeholder={L("حساب الدكتور محمد الفقي الشخصي؛ طلبات الخطوط تُوجَّه إلى مجموعة دكتور الخطوط…", "Dr Mohammed Alfiqi's personal account; font requests go to the Doctor of Fonts group…")} />
               </Field>
               <Field className="sm:col-span-2" label={L("تعليمات المالك", "Owner instructions")} hint={L("أهم الإرشادات التي يجب أن يتبعها في كل محادثة.", "The rules it must follow in every conversation.")}>
-                <textarea className="textarea" value={values.custom_instructions || ""} onChange={(event) => setValues({ ...values, custom_instructions: event.target.value })} placeholder={L("أجب عن استفسارات الخطوط والملفات بلطف؛ لا تخترع روابط أو معلومات…", "Answer font and file questions politely; do not invent links or facts…")} />
+                <textarea className="textarea min-h-[240px]" value={values.custom_instructions || ""} onChange={(event) => setValues({ ...values, custom_instructions: event.target.value })} placeholder={L("رد على الرسائل الشخصية بود، ووجّه طلبات معرفة الخطوط فقط إلى المجموعة…", "Reply warmly to personal messages; refer only clear font requests to the group…")} />
               </Field>
               <Field label={L("أقصى طول للرد", "Max reply length")} hint={L("عدد الأحرف", "Characters")}>
                 <input type="number" className="input" value={values.max_reply_chars || 900} onChange={(event) => setValues({ ...values, max_reply_chars: Number(event.target.value) })} />
@@ -314,7 +320,7 @@ export default function TrainingPage() {
               <ul className="space-y-2.5 text-[11.5px] leading-6 text-slate-500">
                 {[
                   { ar: "اكتب التعليمات بصيغة أوامر واضحة وقصيرة.", en: "Write instructions as short, clear rules." },
-                  { ar: "أضف معلومات الخطوط والروابط الموثوقة في قاعدة المعرفة، لا في التعليمات.", en: "Put verified font information and links in the knowledge base, not the prompt." },
+                  { ar: "اترك شرط توجيه طلبات الخطوط في تعليمات المالك؛ لا تصنع ردًا سريعًا بكلمة «خط» وحدها.", en: "Keep conditional font referrals in owner instructions; never use a broad keyword like “font” as a quick-reply trigger." },
                   { ar: "راقب «أسئلة بلا إجابة» وأضف الردود بانتظام.", en: "Watch unanswered questions and add answers regularly." },
                 ].map((tip) => (
                   <li key={tip.en} className="flex gap-2"><span className="mt-2 h-1 w-1 flex-none rounded-full bg-brand-400" />{L(tip.ar, tip.en)}</li>
@@ -356,7 +362,7 @@ export default function TrainingPage() {
         <Card>
           <CardTitle
             title={L("الردود السريعة", "Quick answers")}
-            subtitle={L("مطابقة دقيقة للكلمات المفتاحية — تُرسل كما هي دون تدخل الذكاء الاصطناعي.", "Exact keyword matches sent verbatim, without the model.")}
+            subtitle={L("قد يُرسل البوت الرد الجاهز مباشرة عند تطابق عبارة، حتى لو احتوت الرسالة على طلب آخر؛ لا تستخدم كلمات عامة مثل «خط».", "A matching phrase can send the canned answer even if the message asks something else; avoid broad keywords such as “font”.")}
             action={<Button size="sm" icon={Plus} onClick={() => setFaqOpen(true)}>{L("إضافة رد", "Add answer")}</Button>}
           />
           {faq.length === 0 ? (
@@ -431,14 +437,14 @@ export default function TrainingPage() {
         }
       >
         <div className="space-y-4">
-          <Field label={L("الكلمات المفتاحية", "Keywords")} hint={L("افصل بينها بفاصلة — مثال: تحميل, خط, رابط", "Comma separated — e.g. download, font, link")}>
-            <input className="input" value={faqForm.keywords} onChange={(event) => setFaqForm({ ...faqForm, keywords: event.target.value })} placeholder={L("تحميل، خط، رابط", "download, font, link")} />
+          <Field label={L("الكلمات المفتاحية", "Keywords")} hint={L("افصل بينها بفاصلة — استخدم عبارة محددة؛ أي كلمة مطابقة قد تُرسل الرد الجاهز مباشرة", "Comma separated — Use a specific phrase; any matching keyword may send the canned reply immediately")}>
+            <input className="input" value={faqForm.keywords} onChange={(event) => setFaqForm({ ...faqForm, keywords: event.target.value })} placeholder={L("فين رابط مجموعة دكتور الخطوط", "where is the Doctor of Fonts group link")} />
           </Field>
           <Field label={L("السؤال (اختياري)", "Question (optional)")}>
-            <input className="input" value={faqForm.question} onChange={(event) => setFaqForm({ ...faqForm, question: event.target.value })} placeholder={L("كيف أحمّل الخط؟", "How can I download the font?")} />
+            <input className="input" value={faqForm.question} onChange={(event) => setFaqForm({ ...faqForm, question: event.target.value })} placeholder={L("فين رابط مجموعة دكتور الخطوط؟", "Where is the Doctor of Fonts group link?")} />
           </Field>
           <Field label={L("الرد", "Answer")}>
-            <textarea className="textarea" value={faqForm.answer} onChange={(event) => setFaqForm({ ...faqForm, answer: event.target.value })} placeholder={L("يمكنك تحميل الخط من الرابط المثبت في المجموعة…", "You can download the font from the pinned group link…")} />
+            <textarea className="textarea" value={faqForm.answer} onChange={(event) => setFaqForm({ ...faqForm, answer: event.target.value })} placeholder={L("رابط المجموعة هو https://t.me/Alfiqifont", "The group link is https://t.me/Alfiqifont")} />
           </Field>
         </div>
       </Modal>
@@ -464,6 +470,18 @@ export default function TrainingPage() {
         </div>
       </Modal>
 
+      <ConfirmDialog
+        open={presetOpen}
+        onClose={() => setPresetOpen(false)}
+        onConfirm={() => {
+          setValues((current) => ({ ...current, ...PERSONAL_REPLY_PRESET }));
+          setPresetOpen(false);
+        }}
+        title={L("تحميل تعليمات حساب الدكتور؟", "Load the doctor's reply template?")}
+        description={L("سيستبدل الاسم والوصف والنبرة واللغة والتعليمات المعروضة حاليًا في النموذج فقط، بما فيها أي تعديلات لم تحفظها. راجع النص ثم اضغط «حفظ التغييرات» لإرساله للبوت عبر الوكيل.", "This replaces the displayed name, description, tone, language and instructions, including unsaved edits. Review the text, then click Save changes to sync it to the bot through the agent.")}
+        confirmLabel={L("تحميل للمراجعة", "Load for review")}
+        danger={false}
+      />
       <ConfirmDialog
         open={deleteFaq !== null}
         onClose={() => setDeleteFaq(null)}
